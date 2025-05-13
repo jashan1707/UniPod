@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import fitz  # PyMuPDF
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -49,6 +50,20 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload():
+    if request.method == 'POST':
+        pdf_file = request.files['pdf_file']
+        pdf_data = pdf_file.read()
+        pdf_document = fitz.open(stream=pdf_data, filetype="pdf")
+        extracted_text = ""
+        for page_num in range(pdf_document.page_count):
+            page = pdf_document[page_num]
+            extracted_text += page.get_text()
+        return render_template('display.html', extracted_text=extracted_text)
+    return render_template('upload.html')
 
 if __name__ == '__main__':
     db.create_all()
