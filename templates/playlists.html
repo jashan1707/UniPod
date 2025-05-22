@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Playlists</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { margin-bottom: 20px; }
+        .playlist { border: 1px solid #ccc; padding: 15px; margin-bottom: 30px; border-radius: 8px; }
+        .episode { margin-left: 20px; padding: 10px; border-top: 1px dashed #ccc; }
+        audio { display: block; margin-top: 5px; }
+        form.inline { display: inline-block; margin-top: 10px; }
+        input[type="text"] { padding: 5px; width: 200px; }
+        button { margin-left: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎶 Your Playlists</h1>
+    <a href="{{ url_for('home') }}">← Back to Home</a> |
+    <a href="{{ url_for('upload') }}">Upload New Podcast</a>
+    <br><br>
+
+    {% if playlists %}
+        {% for playlist in playlists %}
+            <div class="playlist">
+                <h2>{{ playlist.name }}</h2>
+
+                <form class="inline" action="{{ url_for('rename_playlist', id=playlist.id) }}" method="post">
+                    <input type="text" name="new_name" placeholder="Rename playlist">
+                    <button type="submit">Rename</button>
+                </form>
+
+                {% if not playlist.podcasts %}
+                <form class="inline" action="{{ url_for('delete_playlist', id=playlist.id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this empty playlist?');">
+                    <button type="submit">Delete</button>
+                </form>
+                {% endif %}
+
+                <br><br>
+
+                {% if playlist.podcasts %}
+                    {% for podcast in playlist.podcasts %}
+                        <div class="episode">
+                            <strong>{{ podcast.title }}</strong><br>
+                            <small>Created: {{ podcast.created_at | format_uk_time }}</small>
+                            <audio controls>
+                                <source src="{{ podcast.audio_file }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <details>
+                                <summary>View Script</summary>
+                                <p>{{ podcast.script }}</p>
+                            </details>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p><em>No episodes in this playlist yet.</em></p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You don't have any playlists yet.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload PDF - UniPod</title>
+</head>
+<body>
+    <h1>Upload a PDF to Generate Your Podcast</h1>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <label for="host1_name">Name for Host 1:</label>
+      <input type="text" name="host1_name" required value="Jordan">
+
+      <br><br>
+
+      <label for="jordan_voice">Voice for Host 1:</label>
+      <select name="jordan_voice" id="jordan_voice" required>
+        <option value="jordan.wav">Default Male (Jordan)</option>
+      </select>
+      <br>
+      <label>Upload custom Host 1 voice (.wav):</label>
+      <input type="file" name="jordan_custom_wav" accept=".wav">
+
+      <br><br>
+
+      <label for="host2_name">Name for Host 2:</label>
+      <input type="text" name="host2_name" required value="Taylor">
+
+      <br><br>
+
+      <label for="taylor_voice">Voice for Host 2:</label>
+      <select name="taylor_voice" id="taylor_voice" required>
+        <option value="taylor.wav">Default Female (Taylor)</option>
+      </select>
+      <br>
+      <label>Upload custom Host 2 voice (.wav):</label>
+      <input type="file" name="taylor_custom_wav" accept=".wav">
+
+      <br><br>
+
+      <label for="pdf">Choose your PDF file:</label>
+      <input type="file" id="pdf" name="pdf" accept="application/pdf" required>
+
+      <br><br>
+
+      <label for="playlist">Assign to Playlist:</label>
+      <select name="playlist">
+        <option value="">-- Select Existing Playlist --</option>
+        {% for p in playlists %}
+          <option value="{{ p.id }}">{{ p.name }}</option>
+        {% endfor %}
+      </select>
+
+      <br><br>
+
+      <label for="new_playlist">Or create new playlist:</label>
+      <input type="text" id="new_playlist" name="new_playlist" placeholder="Enter new playlist name">
+
+      <br><br>
+
+      <input type="submit" value="Generate Podcast">
+    </form>
+</body>
+</html>

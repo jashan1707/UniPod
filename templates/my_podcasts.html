@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Podcasts</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { margin-bottom: 20px; }
+        .podcast { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        details summary { cursor: pointer; font-weight: bold; }
+        form.inline { display: inline; }
+        input[type="text"] { padding: 5px; width: 200px; }
+        button { margin-left: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎙️ My Generated Podcasts</h1>
+    <a href="{{ url_for('home') }}">← Back to Home</a>
+    <br><br>
+
+    {% if podcasts %}
+        {% for podcast in podcasts %}
+            <div class="podcast">
+                <form class="inline" action="{{ url_for('rename_podcast', id=podcast.id) }}" method="post">
+                    <input type="text" name="new_title" value="{{ podcast.title }}">
+                    <button type="submit">Rename</button>
+                </form>
+
+                <form class="inline" action="{{ url_for('delete_podcast', id=podcast.id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this podcast?');">
+                    <button type="submit">Delete</button>
+                </form>
+
+                <p><small>Created at: {{ podcast.created_at | format_uk_time }}</small></p>
+
+                {% if podcast.playlist %}
+                    <p><strong>🎵 Playlist:</strong> {{ podcast.playlist.name }}</p>
+                {% endif %}
+
+                <audio controls>
+                    <source src="{{ podcast.audio_file }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+
+                <details>
+                    <summary>📜 View Script</summary>
+                    <p>{{ podcast.script }}</p>
+                </details>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You haven't generated any podcasts yet.</p>
+    {% endif %}
+</body>
+</html>
